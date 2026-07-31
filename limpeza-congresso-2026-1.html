@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Limpeza do Congresso 2026</title>
+<style>
+  :root{
+    --bg:#f4f2ec;
+    --paper:#ffffff;
+    --ink:#1f2b28;
+    --muted:#6b7570;
+    --line:#e3e0d4;
+    --teal:#1f5f52;
+    --teal-dark:#173f37;
+    --wa:#25D366;
+    --wa-dark:#1da851;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+  }
+  header{
+    background:var(--teal-dark);
+    color:#f4f2ec;
+    padding:20px 16px 54px;
+    position:relative;
+    overflow:hidden;
+  }
+  header::after{
+    content:"";
+    position:absolute; right:-40px; top:-40px;
+    width:160px;height:160px;border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
+  }
+  header h1{margin:0 0 3px; font-size:1.35rem;}
+  header p{margin:0; color:#c9d8d2; font-size:0.82rem;}
+
+  .now-strip{max-width:640px;margin:-36px auto 0;padding:0 12px;}
+  .now-card{
+    background:var(--paper); border-radius:14px; padding:12px 14px;
+    box-shadow:0 8px 20px rgba(23,63,55,0.15);
+    display:flex; align-items:center; gap:10px;
+  }
+  .now-dot{width:9px;height:9px;border-radius:50%;background:#2f7a53;flex-shrink:0;box-shadow:0 0 0 4px rgba(47,122,83,0.15);}
+  .now-card.off .now-dot{background:var(--muted);box-shadow:0 0 0 4px rgba(107,117,112,0.12);}
+  .now-text b{display:block;font-size:0.9rem;}
+  .now-text span{color:var(--muted);font-size:0.76rem;}
+
+  main{max-width:640px;margin:0 auto;padding:16px 10px 50px;}
+
+  nav.tabs{
+    display:flex; gap:4px; background:var(--paper); border-radius:999px;
+    padding:4px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    position:sticky; top:8px; z-index:10;
+  }
+  nav.tabs button{
+    flex:1; border:none; background:transparent; padding:10px 4px;
+    border-radius:999px; font-size:0.78rem; font-weight:700; color:var(--muted); cursor:pointer;
+  }
+  nav.tabs button.active{background:var(--teal); color:#fff;}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  h2.section-title{
+    font-size:0.74rem; text-transform:uppercase; letter-spacing:1.1px;
+    color:var(--teal); margin:22px 4px 8px; display:flex; align-items:center; gap:8px;
+  }
+  h2.section-title::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  .area-card{
+    background:var(--paper); border-radius:14px; margin-bottom:10px;
+    overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.05);
+  }
+  .area-head{
+    padding:10px 14px; font-size:0.8rem; font-weight:700; color:var(--teal-dark);
+    background:#eef1ec; display:flex; justify-content:space-between; gap:8px;
+  }
+  .area-desc{
+    padding:6px 14px 0; font-size:0.72rem; color:var(--muted);
+  }
+  .row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:10px 14px; border-top:1px solid var(--line);
+  }
+  .row.now-active{background:#eaf5ee;}
+  .row-left{display:flex; flex-direction:column; min-width:0;}
+  .row-time{font-size:0.72rem;color:var(--muted); font-variant-numeric: tabular-nums;}
+  .row-cong{font-size:0.9rem;font-weight:600; overflow-wrap:anywhere;}
+  .row-extra{font-size:0.7rem;color:var(--muted); padding:0 14px 10px; margin-top:-4px;}
+
+  .wa-chip{
+    display:flex; align-items:center; gap:6px;
+    background:#e8f8ee; color:var(--wa-dark);
+    padding:7px 10px; border-radius:999px;
+    font-size:0.78rem; font-weight:700; text-decoration:none;
+    flex-shrink:0; white-space:nowrap;
+  }
+  .wa-chip svg{width:14px;height:14px;flex-shrink:0;}
+  .wa-chip.disabled{background:#eeeeee;color:var(--muted);pointer-events:none;}
+
+  /* Contatos tab */
+  .search-wrap{position:sticky; top:60px; z-index:9; background:var(--bg); padding-bottom:8px;}
+  .search-box{
+    width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--line);
+    font-size:0.95rem; background:var(--paper);
+  }
+  .contact-card{
+    background:var(--paper); border-radius:14px; padding:12px;
+    margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.05);
+    display:flex; align-items:center; gap:12px;
+  }
+  .avatar{
+    width:42px;height:42px;border-radius:50%;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:0.9rem; flex-shrink:0;
+  }
+  .contact-info{flex:1; min-width:0;}
+  .contact-cong{font-size:0.86rem; font-weight:700; overflow-wrap:anywhere;}
+  .contact-nome{font-size:0.78rem; color:var(--muted); margin-top:1px;}
+  .contact-actions{display:flex; gap:6px; flex-shrink:0;}
+  .icon-btn{
+    width:38px;height:38px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    text-decoration:none; flex-shrink:0;
+  }
+  .icon-btn.call{background:#eef1ec; color:var(--teal-dark);}
+  .icon-btn.wa{background:var(--wa); color:#fff;}
+  .icon-btn svg{width:18px;height:18px;}
+
+  .empty-msg{color:var(--muted);font-size:0.85rem;text-align:center;padding:30px 0;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧹 Limpeza do Congresso 2026</h1>
+  <p>Escala de áreas, rodízios e contatos dos responsáveis</p>
+</header>
+
+<div class="now-strip">
+  <div class="now-card" id="nowCard">
+    <div class="now-dot"></div>
+    <div class="now-text">
+      <b id="nowTitle">Carregando...</b>
+      <span id="nowSub"></span>
+    </div>
+  </div>
+</div>
+
+<main>
+  <nav class="tabs" id="tabs">
+    <button data-tab="sexta" class="active">Sexta</button>
+    <button data-tab="sabado">Sábado</button>
+    <button data-tab="domingo">Domingo</button>
+    <button data-tab="contatos">Contatos</button>
+  </nav>
+
+  <div class="panel active" id="panel-sexta"></div>
+  <div class="panel" id="panel-sabado"></div>
+  <div class="panel" id="panel-domingo"></div>
+  <div class="panel" id="panel-contatos">
+    <div class="search-wrap">
+      <input type="text" class="search-box" placeholder="Buscar congregação, nome ou telefone..." id="contactSearch">
+    </div>
+    <div id="contactsList"></div>
+  </div>
+</main>
+
+<script>
+// ---------- CONTATOS (extraídos com layout preservado — dados completos e corretos) ----------
+const CONTACTS = {
+  "Jardim Interlagos (Ribeirão Preto)": { nome:"Arivaldo Silva", tel:"(16) 99456-7892" },
+  "Leste (Ribeirão Preto)": { nome:"Paulo Sérgio S. Puga", tel:"(16) 99270-8942" },
+  "Parque dos Lagos (Ribeirão Preto)": { nome:"Beethoven B. Almeida", tel:"(16) 99231-6290" },
+  "Cristo Redentor (Porto Ferreira)": { nome:"Jonatas Silva", tel:"(19) 99790-6791" },
+  "Recanto das Palmeiras (Ribeirão Preto)": { nome:"Carlos Santos", tel:"(16) 99140-4166" },
+  "Eldorado (Ribeirão Preto)": { nome:"Iuri Gabriel", tel:"(16) 99739-8765" },
+  "Ribeirão Verde (Ribeirão Preto)": { nome:"Rivaldo Braz", tel:"(16) 99315-0576" },
+  "Porto Belo (Porto Ferreira)": { nome:"Noel Torres", tel:"(19) 99701-6322" },
+  "Lagoinha (Ribeirão Preto)": { nome:"Hildebrando Silva", tel:"(16) 98821-5540" },
+  "Bandeirantes (Ribeirão Preto)": { nome:"Odonel Rodrigues", tel:"(16) 99237-7909" },
+  "Jardim Panorama (Franca)": { nome:"Jaime Rodrigues", tel:"(16) 99328-7070" },
+  "Jardim Paulistano (Franca)": { nome:"Matheus Mercurio", tel:"(16) 99967-0673" },
+  "Bela Vista (Porto Ferreira)": { nome:"Ezequiel Vaz", tel:"(19) 97166-1350" },
+  "Central (Porto Ferreira)": { nome:"Guilherme Coelho", tel:"(11) 97040-9116" },
+  "Ribeirânia (Ribeirão Preto)": { nome:"Calebe Rodrigues", tel:"(16) 99140-2046" },
+  "Sul (Ribeirão Preto)": { nome:"Willian Cruz", tel:"(16) 99183-7093" },
+  "Vila Nova (Porto Ferreira)": { nome:"Ariel Heitor", tel:"(19) 99655-4513" }
+};
+
+// ---------- ESCALAS (extraídas com layout preservado) ----------
+const DAYS = {
+  sexta: { label:"Sexta-feira", areas: [
+    { area:"Sala da Limpeza + Bebedouro", desc:"2 irmãs(os) ou 1 casal de hora em hora para a sala de limpeza + 1 irmã(o) de hora em hora para o bebedouro (+ 5 irmãs(os) na limpeza final)",
+      slots:[
+        {time:"07:30–10:00", cong:"Vila Nova (Porto Ferreira)"},
+        {time:"10:00–12:30", cong:"Jardim Interlagos (Ribeirão Preto)"},
+        {time:"12:30–15:00", cong:"Jardim Paulistano (Franca)"},
+        {time:"a partir das 15:00 + Final", cong:"Recanto das Palmeiras (Ribeirão Preto)"}
+      ]},
+    { area:"Sanitários Feminino e Masculino", desc:"2 irmãs e 2 irmãos de hora em hora (+ 4 irmãs e 4 irmãos na limpeza final)",
+      slots:[
+        {time:"07:30–10:00", cong:"Bandeirantes (Ribeirão Preto)"},
+        {time:"10:00–12:30", cong:"Bela Vista (Porto Ferreira)"},
+        {time:"12:30–15:00", cong:"Eldorado (Ribeirão Preto)"},
+        {time:"a partir das 15:00 + Final", cong:"Central (Porto Ferreira)"}
+      ]},
+    { area:"Sanitários Pequenos", desc:"1 casal de hora em hora (+ 2 casais na limpeza final)",
+      slots:[
+        {time:"07:30–11:00", cong:"Lagoinha (Ribeirão Preto)"},
+        {time:"11:00–14:00", cong:"Cristo Redentor (Porto Ferreira)"},
+        {time:"a partir das 14:00 + Final", cong:"Sul (Ribeirão Preto)"}
+      ]},
+    { area:"Refeitório", desc:"1 irmã(o) de hora em hora + 10 irmãs(os) na limpeza final", time:"a partir das 07:30 + Final",
+      slots:[{cong:"Jardim Panorama (Franca)"},{cong:"Parque dos Lagos (Ribeirão Preto)"}]},
+    { area:"Auditório", desc:"1 irmã(o) de hora em hora + 10 irmãs(os) na limpeza final", time:"a partir das 07:30 + Final",
+      slots:[{cong:"Porto Belo (Porto Ferreira)"},{cong:"Ribeirânia (Ribeirão Preto)"}]},
+    { area:"Guarita + Palco e salas + Vestiários", desc:"5 irmãs(os) antes do início do programa + 5 irmãs(os) na limpeza final", time:"07:30–08:00 + Final",
+      slots:[{cong:"Ribeirão Verde (Ribeirão Preto)"}]},
+    { area:"Estacionamento", desc:"4 irmãs(os) antes do início do programa + 10 irmãs(os) na limpeza final", time:"07:30–08:00 + Final",
+      slots:[{cong:"Leste (Ribeirão Preto)"}]}
+  ]},
+  sabado: { label:"Sábado", areas: [
+    { area:"Sala da Limpeza + Bebedouro", desc:"2 irmãs(os) ou 1 casal de hora em hora para a sala de limpeza + 1 irmã(o) de hora em hora para o bebedouro (+ 5 irmãs(os) na limpeza final)",
+      slots:[
+        {time:"07:30–10:00", cong:"Recanto das Palmeiras (Ribeirão Preto)"},
+        {time:"10:00–12:30", cong:"Vila Nova (Porto Ferreira)"},
+        {time:"12:30–15:00", cong:"Jardim Interlagos (Ribeirão Preto)"},
+        {time:"a partir das 15:00 + Final", cong:"Jardim Paulistano (Franca)"}
+      ]},
+    { area:"Sanitários Feminino e Masculino", desc:"2 irmãs e 2 irmãos de hora em hora (+ 4 irmãs e 4 irmãos na limpeza final)",
+      slots:[
+        {time:"07:30–10:00", cong:"Sul (Ribeirão Preto)"},
+        {time:"10:00–12:30", cong:"Ribeirão Verde (Ribeirão Preto)"},
+        {time:"12:30–15:00", cong:"Ribeirânia (Ribeirão Preto)"},
+        {time:"a partir das 15:00 + Final", cong:"Porto Belo (Porto Ferreira)"}
+      ]},
+    { area:"Sanitários Pequenos", desc:"1 casal de hora em hora (+ 2 casais na limpeza final)",
+      slots:[
+        {time:"07:30–11:00", cong:"Parque dos Lagos (Ribeirão Preto)"},
+        {time:"11:00–14:00", cong:"Jardim Panorama (Franca)"},
+        {time:"a partir das 14:00 + Final", cong:"Leste (Ribeirão Preto)"}
+      ]},
+    { area:"Refeitório", desc:"1 irmã(o) de hora em hora + 10 irmãs(os) na limpeza final", time:"a partir das 07:30 + Final",
+      slots:[{cong:"Lagoinha (Ribeirão Preto)"},{cong:"Cristo Redentor (Porto Ferreira)"}]},
+    { area:"Auditório", desc:"1 irmã(o) de hora em hora + 10 irmãs(os) na limpeza final", time:"a partir das 07:30 + Final",
+      slots:[{cong:"Eldorado (Ribeirão Preto)"},{cong:"Central (Porto Ferreira)"}]},
+    { area:"Guarita + Palco e salas + Vestiários", desc:"5 irmãs(os) antes do início do programa + 5 irmãs(os) na limpeza final", time:"07:30–08:00 + Final",
+      slots:[{cong:"Bela Vista (Porto Ferreira)"}]},
+    { area:"Estacionamento", desc:"4 irmãs(os) antes do início do programa + 10 irmãs(os) na limpeza final", time:"07:30–08:00 + Final",
+      slots:[{cong:"Bandeirantes (Ribeirão Preto)"}]}
+  ]},
+  domingo: { label:"Domingo", areas: [
+    { area:"Sala da Limpeza + Bebedouro", desc:"2 irmãs(os) ou 1 casal de hora em hora para a sala de limpeza + 1 irmã(o) de hora em hora para o bebedouro (+ 5 irmãs(os) na limpeza final)",
+      slots:[
+        {time:"07:30–10:00", cong:"Jardim Paulistano (Franca)"},
+        {time:"10:00–12:30", cong:"Recanto das Palmeiras (Ribeirão Preto)"},
+        {time:"12:30–15:00", cong:"Vila Nova (Porto Ferreira)"},
+        {time:"a partir das 15:00 + Final", cong:"Jardim Interlagos (Ribeirão Preto)"}
+      ]},
+    { area:"Sanitários Feminino e Masculino", desc:"2 irmãs e 2 irmãos de hora em hora (+ 4 irmãs e 4 irmãos na limpeza final)",
+      slots:[
+        {time:"07:30–10:00", cong:"Lagoinha (Ribeirão Preto)"},
+        {time:"10:00–12:30", cong:"Cristo Redentor (Porto Ferreira)"},
+        {time:"12:30–15:00", cong:"Leste (Ribeirão Preto)"},
+        {time:"a partir das 15:00 + Final", cong:"Jardim Panorama (Franca)"}
+      ]},
+    { area:"Sanitários Pequenos", desc:"1 casal de hora em hora (+ 2 casais na limpeza final)",
+      slots:[
+        {time:"07:30–11:00", cong:"Porto Belo (Porto Ferreira)"},
+        {time:"11:00–14:00", cong:"Ribeirânia (Ribeirão Preto)"},
+        {time:"a partir das 14:00 + Final", cong:"Ribeirão Verde (Ribeirão Preto)"}
+      ]},
+    { area:"Refeitório", desc:"1 irmã(o) de hora em hora + 10 irmãs(os) na limpeza final", time:"a partir das 07:30 + Final",
+      slots:[{cong:"Bandeirantes (Ribeirão Preto)"},{cong:"Eldorado (Ribeirão Preto)"}]},
+    { area:"Auditório", desc:"1 irmã(o) de hora em hora + 10 irmãs(os) na limpeza final", time:"a partir das 07:30 + Final",
+      slots:[{cong:"Bela Vista (Porto Ferreira)"},{cong:"Parque dos Lagos (Ribeirão Preto)"}]},
+    { area:"Guarita + Palco e salas + Vestiários", desc:"5 irmãs(os) antes do início do programa + 5 irmãs(os) na limpeza final", time:"07:30–08:00 + Final",
+      slots:[{cong:"Central (Porto Ferreira)"}]},
+    { area:"Estacionamento", desc:"4 irmãs(os) antes do início do programa + 10 irmãs(os) na limpeza final", time:"07:30–08:00 + Final",
+      slots:[{cong:"Sul (Ribeirão Preto)"}]}
+  ]}
+};
+
+// ---------- HELPERS ----------
+function onlyDigits(s){ return (s||"").replace(/\D/g,""); }
+function waLink(tel){
+  const d = onlyDigits(tel);
+  if(!d) return null;
+  return "https://wa.me/55"+d;
+}
+function telLink(tel){
+  const d = onlyDigits(tel);
+  if(!d) return null;
+  return "tel:+55"+d;
+}
+function initials(name){
+  return name.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+}
+const WA_ICON = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.2-.5.1-.2 0-.3 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.5h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.1s.9 2.4 1.1 2.6c.1.2 1.8 2.8 4.4 3.9.6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.6-.6 1.8-1.3.2-.6.2-1.1.2-1.2-.1-.2-.2-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.6 1.4 5.1L2 22l5-1.3C8.4 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.6 0-3.2-.4-4.5-1.2l-.3-.2-3 .8.8-2.9-.2-.3C4 15 3.5 13.5 3.5 12c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5-3.8 8.5-8.5 8.5z"/></svg>`;
+const CALL_ICON = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.7 3.6 4.9 6.3 6.3l2.1-2.1c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.2 1z"/></svg>`;
+
+function contactPill(congName){
+  const c = CONTACTS[congName];
+  if(!c) return `<span class="wa-chip disabled">Sem contato</span>`;
+  const link = waLink(c.tel) || "#";
+  return `<a class="wa-chip ${waLink(c.tel)?"":"disabled"}" href="${link}" target="_blank" rel="noopener">${WA_ICON}${c.nome}</a>`;
+}
+
+function renderDay(key){
+  const day = DAYS[key];
+  const panel = document.getElementById("panel-"+key);
+  let html = "";
+  day.areas.forEach(a => {
+    html += `<div class="area-card" data-area="${a.area}">
+      <div class="area-head"><span>${a.area}</span>${a.time ? `<span style="font-weight:400;font-size:0.7rem;color:var(--muted);">${a.time}</span>`:""}</div>
+      <div class="area-desc">${a.desc}</div>`;
+    a.slots.forEach(s => {
+      html += `<div class="row" data-time="${s.time||''}">
+        <div class="row-left">
+          ${s.time ? `<div class="row-time">${s.time}</div>` : ""}
+          <div class="row-cong">${s.cong}</div>
+        </div>
+        ${contactPill(s.cong)}
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  panel.innerHTML = html;
+}
+
+function renderContacts(filter){
+  const list = document.getElementById("contactsList");
+  const f = (filter||"").toLowerCase();
+  const entries = Object.entries(CONTACTS).sort((a,b)=>a[0].localeCompare(b[0],'pt-BR'));
+  let html = "";
+  entries.forEach(([cong, c]) => {
+    const searchable = (cong+" "+c.nome+" "+c.tel).toLowerCase();
+    if(f && !searchable.includes(f)) return;
+    const wa = waLink(c.tel);
+    const call = telLink(c.tel);
+    html += `<div class="contact-card">
+      <div class="avatar">${initials(c.nome)}</div>
+      <div class="contact-info">
+        <div class="contact-cong">${cong}</div>
+        <div class="contact-nome">${c.nome} · ${c.tel}</div>
+      </div>
+      <div class="contact-actions">
+        <a class="icon-btn call" href="${call}">${CALL_ICON}</a>
+        <a class="icon-btn wa" href="${wa}" target="_blank" rel="noopener">${WA_ICON}</a>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html || `<div class="empty-msg">Nenhum contato encontrado.</div>`;
+}
+
+// ---------- TABS ----------
+document.getElementById("tabs").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-tab]");
+  if(!btn) return;
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("panel-"+btn.dataset.tab).classList.add("active");
+});
+document.getElementById("contactSearch").addEventListener("input", e => renderContacts(e.target.value));
+
+// ---------- "AGORA" ----------
+function timeToMin(str){
+  const m = str.match(/(\d{2}):(\d{2})/);
+  return m ? (+m[1])*60+(+m[2]) : null;
+}
+function updateNow(){
+  const now = new Date();
+  const wd = now.getDay();
+  const map = {5:"sexta", 6:"sabado", 0:"domingo"};
+  const key = map[wd];
+  const card = document.getElementById("nowCard");
+  const title = document.getElementById("nowTitle");
+  const sub = document.getElementById("nowSub");
+
+  document.querySelectorAll(".row").forEach(r=>r.classList.remove("now-active"));
+
+  if(!key){
+    card.classList.add("off");
+    title.textContent = "Hoje não é dia de congresso";
+    sub.textContent = "Confira as escalas nas abas acima";
+    return;
+  }
+  card.classList.remove("off");
+  const mins = now.getHours()*60 + now.getMinutes();
+  let activeAreas = [];
+  DAYS[key].areas.forEach(a => {
+    if(a.slots.length<2 || !a.slots[0].time) return;
+    for(let i=0;i<a.slots.length;i++){
+      const start = timeToMin(a.slots[i].time);
+      const nextTime = a.slots[i+1] ? timeToMin(a.slots[i+1].time) : 24*60;
+      if(start!==null && mins>=start && mins<nextTime){
+        activeAreas.push({area:a.area, cong:a.slots[i].cong});
+      }
+    }
+  });
+  title.textContent = DAYS[key].label;
+  sub.textContent = activeAreas.length ? activeAreas.map(x=>`${x.area}: ${x.cong}`).join(" · ") : "Confira a aba para a escala completa";
+
+  const panel = document.getElementById("panel-"+key);
+  if(panel){
+    panel.querySelectorAll(".area-card").forEach(card => {
+      const rows = Array.from(card.querySelectorAll(".row"));
+      rows.forEach((row, idx) => {
+        const t = row.dataset.time;
+        if(!t) return;
+        const start = timeToMin(t);
+        if(start===null) return;
+        const nextT = rows[idx+1] ? timeToMin(rows[idx+1].dataset.time) : 24*60;
+        if(mins>=start && mins<nextT) row.classList.add("now-active");
+      });
+    });
+  }
+}
+
+// ---------- INIT ----------
+renderDay("sexta");
+renderDay("sabado");
+renderDay("domingo");
+renderContacts("");
+updateNow();
+setInterval(updateNow, 60000);
+</script>
+</body>
+</html>
